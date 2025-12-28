@@ -2,78 +2,137 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>K-Donalds Enterprise OS | Sound Update</title>
+    <title>K-Donalds Premium OS</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <style>
         :root {
+            --bg: #0b0b0b;
+            --card-bg: #1c1c1e;
+            --accent: #21a038; /* Сбер Зеленый */
             --mcd-red: #da291c;
-            --mcd-yellow: #ffbc0d;
-            --mcd-black: #1a1a1a;
-            --sber-green: #21a038;
-            --sber-blue: #084990;
+            --glass: rgba(255, 255, 255, 0.05);
+            --text-main: #ffffff;
+            --text-dim: #8e8e93;
         }
 
-        body, html { margin: 0; padding: 0; font-family: 'Arial', sans-serif; height: 100%; background: #000; color: white; overflow: hidden; }
-        
-        .dev-nav { position: fixed; bottom: 0; width: 100%; background: rgba(0,0,0,0.9); display: flex; z-index: 10000; padding: 5px; gap: 5px; }
-        .dev-nav button { flex: 1; padding: 12px; font-size: 11px; background: #333; color: white; border: none; border-radius: 5px; cursor: pointer; }
-        .dev-nav button.active { background: var(--mcd-red); }
+        body, html { 
+            margin: 0; padding: 0; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            height: 100%; background: var(--bg); color: var(--text-main); overflow: hidden; 
+        }
 
-        .screen { display: none; height: 100vh; width: 100vw; box-sizing: border-box; }
+        /* Навигация как в iOS */
+        .dev-nav { 
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            width: 90%; background: rgba(28, 28, 30, 0.8); 
+            backdrop-filter: blur(20px); border-radius: 20px; 
+            display: flex; z-index: 10000; padding: 8px; gap: 5px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .dev-nav button { 
+            flex: 1; padding: 10px; font-size: 11px; background: transparent; 
+            color: var(--text-dim); border: none; border-radius: 12px; cursor: pointer; transition: 0.3s;
+        }
+        .dev-nav button.active { background: var(--glass); color: #fff; font-weight: bold; }
+
+        .screen { display: none; height: 100vh; width: 100vw; box-sizing: border-box; padding-bottom: 100px; }
         .screen.active { display: flex; }
 
-        /* КИОСК */
-        #kiosk { background: var(--mcd-black); flex-direction: column; }
-        .kiosk-grid { flex: 1; display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; padding: 20px; overflow-y: auto; }
-        .kiosk-card { background: #262626; border-radius: 15px; padding: 15px; text-align: center; border: 2px solid transparent; }
-        .kiosk-card img { width: 100%; height: 120px; object-fit: contain; }
+        /* КИОСК: Современный темный дизайн */
+        #kiosk { flex-direction: column; background: var(--bg); }
+        .header-ios { padding: 40px 20px 20px; font-size: 28px; font-weight: 800; letter-spacing: -1px; }
+        .kiosk-grid { 
+            flex: 1; display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
+            gap: 15px; padding: 0 20px; overflow-y: auto; 
+        }
+        .kiosk-card { 
+            background: var(--card-bg); border-radius: 24px; padding: 15px; 
+            text-align: left; border: 1px solid rgba(255,255,255,0.05); 
+            transition: transform 0.2s;
+        }
+        .kiosk-card:active { transform: scale(0.95); }
+        .kiosk-card img { width: 100%; height: 110px; object-fit: contain; margin-bottom: 10px; }
+        .kiosk-card h3 { margin: 5px 0; font-size: 16px; }
+        .kiosk-card p { color: var(--accent); font-weight: bold; margin: 0; }
 
         /* КАССА + АДМИНКА */
-        #cashier { background: #f4f4f4; color: #333; }
-        .cashier-main { flex: 3; display: flex; flex-direction: column; padding: 15px; gap: 10px; }
-        .admin-box { background: #fff; padding: 15px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px; }
-        .admin-box input { padding: 8px; border: 1px solid #ccc; border-radius: 5px; }
-        .cashier-grid { flex: 1; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; overflow-y: auto; }
-        .c-btn { background: white; border: 1px solid #ddd; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: center; }
+        #cashier { background: #000; }
+        .cashier-main { flex: 2; display: flex; flex-direction: column; padding: 20px; gap: 20px; }
+        .admin-box { 
+            background: var(--card-bg); padding: 20px; border-radius: 20px; 
+            display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px; 
+        }
+        .admin-box input { 
+            background: #2c2c2e; border: none; padding: 12px; border-radius: 10px; color: #fff; 
+        }
+        .cashier-grid { flex: 1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; overflow-y: auto; }
+        .c-btn { 
+            background: var(--card-bg); border: 1px solid rgba(255,255,255,0.1); 
+            padding: 20px; border-radius: 15px; color: #fff; font-weight: 600; cursor: pointer; 
+        }
 
-        /* ЭКРАН КЛИЕНТА (VFD) */
-        .vfd-screen { flex: 1.2; background: #000; color: #0f0; font-family: 'Courier New', monospace; display: flex; flex-direction: column; padding: 20px; border-left: 4px solid #333; }
-        .vfd-total { margin-top: auto; border-top: 2px dashed #0f0; padding-top: 10px; font-size: 2.5rem; text-align: right; }
+        /* ЭКРАН КЛИЕНТА (APPLE STYLE) */
+        .vfd-screen { 
+            flex: 1; background: var(--card-bg); margin: 20px; border-radius: 30px; 
+            display: flex; flex-direction: column; padding: 25px; border: 1px solid rgba(255,255,255,0.1);
+        }
+        .vfd-total-box { 
+            background: linear-gradient(135deg, #2c2c2e 0%, #1c1c1e 100%);
+            padding: 25px; border-radius: 20px; margin-top: auto; 
+        }
 
-        /* СБЕР ТЕРМИНАЛ */
-        #terminal { background: #222; justify-content: center; align-items: center; }
-        .sber-ui { width: 300px; height: 480px; background: #fff; border-radius: 25px; display: flex; flex-direction: column; overflow: hidden; color: #333; }
-        .sber-top { height: 60px; background: linear-gradient(to right, #21a038, #084990); }
-        .sber-body { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; }
+        /* ТЕРМИНАЛ СБЕР ОНЛАЙН */
+        #terminal { background: #000; justify-content: center; align-items: center; }
+        .sber-app { 
+            width: 320px; height: 600px; background: #0b0b0b; border-radius: 45px; 
+            border: 8px solid #1c1c1e; position: relative; overflow: hidden; 
+            display: flex; flex-direction: column;
+        }
+        .sber-card-visual {
+            background: linear-gradient(135deg, #084990 0%, #21a038 100%);
+            margin: 20px; height: 180px; border-radius: 20px; padding: 20px;
+            display: flex; flex-direction: column; justify-content: space-between;
+        }
+        .sber-pay-btn {
+            background: var(--accent); color: #fff; border: none; 
+            padding: 18px; border-radius: 15px; width: 90%; margin: 20px auto;
+            font-weight: bold; font-size: 16px; cursor: pointer;
+        }
 
         /* КУХНЯ */
-        #kitchen { background: #111; padding: 30px; display: block; overflow-y: auto; }
-        .order-strip { background: #fff; color: #000; margin-bottom: 15px; padding: 20px; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; border-left: 10px solid var(--mcd-red); }
-        
+        .order-ios { 
+            background: var(--card-bg); margin: 15px; padding: 20px; 
+            border-radius: 20px; border-left: 6px solid var(--accent);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
         /* ТАБЛО */
-        #display { background: #000; font-weight: bold; }
-        .tablo-col { flex: 1; padding: 20px; text-align: center; }
-        .num-big { font-size: 120px; line-height: 1; margin: 20px 0; }
+        .tablo-card { background: var(--card-bg); border-radius: 30px; flex: 1; margin: 20px; padding: 30px; text-align: center; }
     </style>
 </head>
 <body>
 
     <div class="dev-nav">
-        <button onclick="showScreen('kiosk')" class="active">🍔 КИОСК</button>
-        <button onclick="showScreen('cashier')">💰 КАССА</button>
-        <button onclick="showScreen('kitchen')">👨‍🍳 КУХНЯ</button>
-        <button onclick="showScreen('display')">📺 ТАБЛО</button>
-        <button onclick="showScreen('terminal')">💳 СБЕР</button>
+        <button onclick="showScreen('kiosk')" class="active">Главная</button>
+        <button onclick="showScreen('cashier')">Касса</button>
+        <button onclick="showScreen('kitchen')">Кухня</button>
+        <button onclick="showScreen('display')">Табло</button>
+        <button onclick="showScreen('terminal')">Оплата</button>
     </div>
 
     <div id="kiosk" class="screen active">
-        <div style="background:var(--mcd-red); padding:15px; text-align:center; font-weight:bold;">ЗАКАЖИТЕ ЗДЕСЬ</div>
+        <div class="header-ios">Меню</div>
         <div class="kiosk-grid" id="k-grid"></div>
-        <div style="background:#fff; color:#000; padding:20px; display:flex; justify-content:space-between; align-items:center;">
-            <div id="k-sum" style="font-size:24px; font-weight:bold;">0.00 ₽</div>
-            <button onclick="goToPay()" style="background:var(--mcd-red); color:#fff; border:none; padding:15px 30px; border-radius:30px; font-weight:bold; cursor:pointer;">ОПЛАТИТЬ</button>
+        <div style="padding: 20px;">
+            <div style="background: var(--card-bg); padding: 25px; border-radius: 25px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <div style="color: var(--text-dim); font-size: 14px;">К оплате</div>
+                    <div id="k-sum" style="font-size: 24px; font-weight: bold;">0.00 ₽</div>
+                </div>
+                <button onclick="goToPay()" style="background: var(--accent); color: #fff; border: none; padding: 15px 35px; border-radius: 15px; font-weight: bold; cursor: pointer;">Заказать</button>
+            </div>
         </div>
     </div>
 
@@ -82,51 +141,59 @@
             <div class="admin-box">
                 <input type="text" id="add-name" placeholder="Название">
                 <input type="number" id="add-price" placeholder="Цена">
-                <input type="text" id="add-img" placeholder="URL картинки">
-                <button onclick="saveToDb()" style="background:var(--sber-green); color:#fff; border:none; border-radius:5px; padding:0 15px; cursor:pointer;">ДОБАВИТЬ</button>
+                <input type="text" id="add-img" placeholder="URL фото">
+                <button onclick="saveToDb()" style="background:var(--accent); color:#fff; border:none; border-radius:10px; padding:0 20px; cursor:pointer;">+</button>
             </div>
             <div class="cashier-grid" id="c-grid"></div>
         </div>
         <div class="vfd-screen">
-            <div style="font-size:12px;">>>> K-DONALDS VFD SYSTEM <<<</div>
-            <div id="vfd-items" style="margin-top:20px; flex:1; overflow:hidden;"></div>
-            <div class="vfd-total" id="vfd-sum">0.00</div>
-            <button onclick="goToPay()" style="background:#0f0; color:#000; border:none; padding:15px; font-weight:bold; cursor:pointer; margin-top:10px;">ОПЛАТА</button>
-            <button onclick="clearCart()" style="color:#0f0; background:none; border:none; cursor:pointer; margin-top:5px;">[СБРОС]</button>
-        </div>
-    </div>
-
-    <div id="terminal" class="screen">
-        <div class="sber-ui">
-            <div class="sber-top"></div>
-            <div class="sber-body">
-                <p>К ОПЛАТЕ</p>
-                <h1 id="sber-sum" style="font-size:40px; margin:10px 0;">0.00 ₽</h1>
-                <div onclick="processPay()" style="cursor:pointer; margin-top:30px;">
-                    <img src="https://img.icons8.com/ios/100/contactless-payment.png" width="80" style="opacity:0.6;">
-                    <p style="font-size:12px; color:#999;">ПРИЛОЖИТЕ КАРТУ</p>
-                </div>
+            <h2 style="margin: 0 0 20px 0;">Текущий чек</h2>
+            <div id="vfd-items" style="flex:1; font-size: 18px;"></div>
+            <div class="vfd-total-box">
+                <div style="color: var(--text-dim);">Итого</div>
+                <div id="vfd-sum" style="font-size: 32px; font-weight: bold;">0.00</div>
+                <button onclick="goToPay()" style="width:100%; margin-top:15px; background:var(--accent); border:none; padding:15px; border-radius:12px; color:#fff; font-weight:bold; cursor:pointer;">Оплатить заказ</button>
             </div>
         </div>
     </div>
 
-    <div id="kitchen" class="screen">
-        <h1 style="color:var(--mcd-yellow);">ЗАКАЗЫ В РАБОТЕ</h1>
+    <div id="terminal" class="screen">
+        <div class="sber-app">
+            <div style="padding: 40px 20px 10px; font-weight: bold; font-size: 18px;">К-Онлайн</div>
+            <div class="sber-card-visual">
+                <div style="font-size: 14px; opacity: 0.8;">Личный счет</div>
+                <div id="sber-sum" style="font-size: 32px; font-weight: bold;">0.00 ₽</div>
+                <div style="font-size: 12px; letter-spacing: 2px;">•••• 4452</div>
+            </div>
+            <div style="padding: 0 20px; flex: 1;">
+                <p style="color: var(--text-dim); font-size: 14px;">Платежи и сервисы</p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div style="background: var(--card-bg); height: 80px; border-radius: 15px;"></div>
+                    <div style="background: var(--card-bg); height: 80px; border-radius: 15px;"></div>
+                </div>
+            </div>
+            <button class="sber-pay-btn" onclick="processPay()">Подтвердить оплату</button>
+        </div>
+    </div>
+
+    <div id="kitchen" class="screen" style="flex-direction: column; overflow-y: auto; padding: 20px;">
+        <h1 style="margin-left: 20px;">Заказы</h1>
         <div id="kit-list"></div>
     </div>
 
     <div id="display" class="screen">
-        <div class="tablo-col" style="border-right:1px solid #222;">
-            <h2 style="color:red;">ГОТОВИТСЯ</h2>
-            <div id="tab-prep" class="num-big" style="color:#444;"></div>
+        <div class="tablo-card">
+            <h2 style="color: var(--text-dim);">Готовится</h2>
+            <div id="tab-prep" style="font-size: 80px; font-weight: 800; color: var(--text-dim);"></div>
         </div>
-        <div class="tablo-col">
-            <h2 style="color:var(--sber-green);">ГОТОВО</h2>
-            <div id="tab-ready" class="num-big" style="color:var(--mcd-yellow);"></div>
+        <div class="tablo-card" style="border: 2px solid var(--accent);">
+            <h2 style="color: var(--accent);">Готово</h2>
+            <div id="tab-ready" style="font-size: 80px; font-weight: 800; color: var(--accent);"></div>
         </div>
     </div>
 
     <script>
+        // Использование твоих конфигов Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyBX7BbbkBR7ITiayV132J9LlOqjh3l4AJs",
             authDomain: "fastfood-ltd-system.firebaseapp.com",
@@ -140,8 +207,6 @@
         
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
-
-        // Звук ICQ
         const audio = new Audio('https://www.soundboard.com/handler/DownLoadTrack.ashx?cliptoken=80685955-468a-449e-998a-78567104b281');
 
         let cart = [];
@@ -152,21 +217,25 @@
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             document.querySelectorAll('.dev-nav button').forEach(b => b.classList.remove('active'));
-            event.target.classList.add('active');
+            const btns = document.querySelectorAll('.dev-nav button');
+            if(id === 'kiosk') btns[0].classList.add('active');
+            if(id === 'cashier') btns[1].classList.add('active');
+            if(id === 'kitchen') btns[2].classList.add('active');
+            if(id === 'display') btns[3].classList.add('active');
+            if(id === 'terminal') btns[4].classList.add('active');
         }
 
-        // Админка
         function saveToDb() {
             const n = document.getElementById('add-name').value;
             const p = document.getElementById('add-price').value;
             const i = document.getElementById('add-img').value || 'https://img.icons8.com/plasticine/100/hamburger.png';
             if(n && p) {
                 db.ref('menu').push({ name: n, price: parseInt(p), img: i });
-                alert("Добавлено!");
+                document.getElementById('add-name').value = '';
+                document.getElementById('add-price').value = '';
             }
         }
 
-        // Меню
         db.ref('menu').on('value', snap => {
             const items = snap.val() || {};
             const k = document.getElementById('k-grid');
@@ -179,12 +248,10 @@
         });
 
         function add(n, p) { cart.push({n, p}); total += p; refresh(); }
-        function clearCart() { cart = []; total = 0; refresh(); }
-
         function refresh() {
-            document.getElementById('k-sum').innerText = total + ".00 ₽";
-            document.getElementById('vfd-sum').innerText = total + ".00";
-            document.getElementById('vfd-items').innerHTML = cart.map(i => `<div>${i.n.padEnd(15)} ${i.p}</div>`).join('');
+            document.getElementById('k-sum').innerText = total.toFixed(2) + " ₽";
+            document.getElementById('vfd-sum').innerText = total.toFixed(2) + " ₽";
+            document.getElementById('vfd-items').innerHTML = cart.map(i => `<div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span>${i.n}</span><span>${i.p} ₽</span></div>`).join('');
         }
 
         function goToPay() {
@@ -195,40 +262,38 @@
 
         db.ref('system/terminal').on('value', snap => {
             const v = snap.val();
-            if(v) document.getElementById('sber-sum').innerText = v.amount + ".00 ₽";
+            if(v) document.getElementById('sber-sum').innerText = v.amount.toFixed(2) + " ₽";
         });
 
         function processPay() {
             db.ref('system/terminal').once('value', snap => {
                 const v = snap.val();
+                if(!v) return;
                 const id = Math.floor(Math.random()*900)+100;
                 db.ref('orders/'+id).set({ id, items: v.items, status: 'preparing' });
                 db.ref('system/terminal').remove();
-                clearCart();
+                cart = []; total = 0; refresh();
                 showScreen('kiosk');
             });
         }
 
-        // Кухня + Звук
         db.ref('orders').on('value', snap => {
             const orders = snap.val() || {};
             const kit = document.getElementById('kit-list');
             const prep = document.getElementById('tab-prep');
             const ready = document.getElementById('tab-ready');
             
-            // Если заказов стало больше - играем звук
             const currentCount = Object.keys(orders).length;
             if(currentCount > lastOrderCount) audio.play();
             lastOrderCount = currentCount;
 
             kit.innerHTML = ''; prep.innerHTML = ''; ready.innerHTML = '';
-            
             Object.values(orders).forEach(o => {
                 if(o.status === 'preparing') {
-                    kit.innerHTML += `<div class="order-strip"><div><b style="font-size:24px">#${o.id}</b><br>${o.items.join(', ')}</div><button onclick="db.ref('orders/${o.id}').update({status:'ready'})" style="padding:10px 20px; background:var(--sber-green); color:#fff; border:none; border-radius:5px; cursor:pointer;">ГОТОВО</button></div>`;
-                    prep.innerHTML += `<div>${o.id}</div>`;
+                    kit.innerHTML += `<div class="order-ios"><div><b style="font-size:20px">#${o.id}</b><br><span style="color:var(--text-dim)">${o.items.join(', ')}</span></div><button onclick="db.ref('orders/${o.id}').update({status:'ready'})" style="background:var(--accent); color:#fff; border:none; padding:10px 20px; border-radius:10px; cursor:pointer;">Готово</button></div>`;
+                    prep.innerHTML += ` ${o.id} `;
                 } else {
-                    ready.innerHTML += `<div>${o.id}</div>`;
+                    ready.innerHTML += ` ${o.id} `;
                 }
             });
         });
