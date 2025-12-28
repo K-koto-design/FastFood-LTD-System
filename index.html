@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>K-Donalds Pro OS | FastFood LTD</title>
+    <title>K-Donalds Enterprise OS | Sound Update</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
@@ -10,102 +10,121 @@
         :root {
             --mcd-red: #da291c;
             --mcd-yellow: #ffbc0d;
-            --dark: #272321;
-            --white: #ffffff;
-            --gray: #f4f4f4;
-            --green: #28a745;
+            --mcd-black: #1a1a1a;
+            --sber-green: #21a038;
+            --sber-blue: #084990;
         }
 
-        body { font-family: 'Arial', sans-serif; margin: 0; background: var(--gray); overflow: hidden; touch-action: manipulation; }
-
-        .admin-nav { display: flex; background: var(--dark); padding: 5px; gap: 5px; overflow-x: auto; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-        .nav-btn { padding: 12px 15px; border: none; border-radius: 8px; background: #444; color: white; cursor: pointer; white-space: nowrap; font-weight: bold; font-size: 13px; }
-        .nav-btn.active { background: var(--mcd-red); }
-        .fs-btn { background: var(--mcd-yellow); color: #000; margin-left: auto; }
-
-        .screen { display: none; height: calc(100vh - 55px); padding: 15px; box-sizing: border-box; }
-        .screen.active { display: flex; flex-direction: column; }
-
-        .pos-container { display: flex; gap: 15px; height: 100%; overflow: hidden; }
-        .menu-grid { flex: 2; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; overflow-y: auto; padding-bottom: 20px; }
-        .order-sidebar { flex: 1; background: white; border-radius: 12px; padding: 15px; display: flex; flex-direction: column; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        body, html { margin: 0; padding: 0; font-family: 'Arial', sans-serif; height: 100%; background: #000; color: white; overflow: hidden; }
         
-        /* Админ-зона для добавления товаров */
-        .admin-panel { background: #eee; padding: 10px; border-radius: 10px; margin-bottom: 10px; border: 1px dashed #ccc; }
-        .admin-panel input { width: 90%; margin: 3px 0; padding: 5px; border-radius: 5px; border: 1px solid #ccc; }
+        .dev-nav { position: fixed; bottom: 0; width: 100%; background: rgba(0,0,0,0.9); display: flex; z-index: 10000; padding: 5px; gap: 5px; }
+        .dev-nav button { flex: 1; padding: 12px; font-size: 11px; background: #333; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        .dev-nav button.active { background: var(--mcd-red); }
 
-        .menu-item { background: white; border-radius: 12px; padding: 10px; text-align: center; cursor: pointer; border: 2px solid transparent; transition: 0.2s; position: relative; }
-        .menu-item:hover { border-color: var(--mcd-yellow); }
-        .menu-item img { width: 70px; height: 70px; object-fit: contain; border-radius: 5px; }
-        .menu-item h3 { font-size: 14px; margin: 5px 0; }
-        .delete-item { position: absolute; top: 2px; right: 2px; color: red; font-size: 12px; display: none; }
-        .menu-item:hover .delete-item { display: block; }
+        .screen { display: none; height: 100vh; width: 100vw; box-sizing: border-box; }
+        .screen.active { display: flex; }
 
-        .cart-items { flex: 1; overflow-y: auto; font-size: 14px; margin: 10px 0; border-top: 1px solid #eee; padding-top: 10px; }
-        .cart-row { display: flex; justify-content: space-between; margin-bottom: 5px; animation: slideIn 0.2s ease; }
+        /* КИОСК */
+        #kiosk { background: var(--mcd-black); flex-direction: column; }
+        .kiosk-grid { flex: 1; display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; padding: 20px; overflow-y: auto; }
+        .kiosk-card { background: #262626; border-radius: 15px; padding: 15px; text-align: center; border: 2px solid transparent; }
+        .kiosk-card img { width: 100%; height: 120px; object-fit: contain; }
 
-        .kitchen-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; overflow-y: auto; }
-        .order-card { background: white; border-top: 6px solid var(--mcd-red); border-radius: 10px; padding: 12px; }
+        /* КАССА + АДМИНКА */
+        #cashier { background: #f4f4f4; color: #333; }
+        .cashier-main { flex: 3; display: flex; flex-direction: column; padding: 15px; gap: 10px; }
+        .admin-box { background: #fff; padding: 15px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px; }
+        .admin-box input { padding: 8px; border: 1px solid #ccc; border-radius: 5px; }
+        .cashier-grid { flex: 1; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; overflow-y: auto; }
+        .c-btn { background: white; border: 1px solid #ddd; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: center; }
 
-        .display-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; height: 100%; }
-        .column { background: white; border-radius: 20px; padding: 20px; text-align: center; }
-        .number-list { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; font-size: 50px; font-weight: 800; }
-        .ready-num { color: var(--green); animation: blink 1s infinite; }
+        /* ЭКРАН КЛИЕНТА (VFD) */
+        .vfd-screen { flex: 1.2; background: #000; color: #0f0; font-family: 'Courier New', monospace; display: flex; flex-direction: column; padding: 20px; border-left: 4px solid #333; }
+        .vfd-total { margin-top: auto; border-top: 2px dashed #0f0; padding-top: 10px; font-size: 2.5rem; text-align: right; }
 
-        .terminal-wrap { margin: auto; width: 300px; background: #222; border-radius: 25px; padding: 40px; color: #0f0; text-align: center; border: 5px solid #444; font-family: 'Courier New', monospace; }
-        .card-reader { width: 100%; height: 60px; background: #111; margin-top: 30px; border-radius: 8px; line-height: 60px; border: 2px dashed #333; cursor: pointer; }
+        /* СБЕР ТЕРМИНАЛ */
+        #terminal { background: #222; justify-content: center; align-items: center; }
+        .sber-ui { width: 300px; height: 480px; background: #fff; border-radius: 25px; display: flex; flex-direction: column; overflow: hidden; color: #333; }
+        .sber-top { height: 60px; background: linear-gradient(to right, #21a038, #084990); }
+        .sber-body { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; }
 
-        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
-        .btn-pay { background: var(--green); color: white; border: none; padding: 15px; border-radius: 8px; font-size: 18px; font-weight: bold; width: 100%; cursor: pointer; }
-        .btn-add { background: var(--mcd-yellow); border: none; padding: 8px; border-radius: 5px; font-weight: bold; width: 100%; margin-top: 5px; cursor: pointer; }
+        /* КУХНЯ */
+        #kitchen { background: #111; padding: 30px; display: block; overflow-y: auto; }
+        .order-strip { background: #fff; color: #000; margin-bottom: 15px; padding: 20px; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; border-left: 10px solid var(--mcd-red); }
+        
+        /* ТАБЛО */
+        #display { background: #000; font-weight: bold; }
+        .tablo-col { flex: 1; padding: 20px; text-align: center; }
+        .num-big { font-size: 120px; line-height: 1; margin: 20px 0; }
     </style>
 </head>
 <body>
 
-    <nav class="admin-nav">
-        <button class="nav-btn active" onclick="switchTab('kiosk', this)">🍔 Киоск</button>
-        <button class="nav-btn" onclick="switchTab('cashier', this)">💰 Касса</button>
-        <button class="nav-btn" onclick="switchTab('kitchen', this)">👨‍🍳 Кухня</button>
-        <button class="nav-btn" onclick="switchTab('display', this)">📺 Табло</button>
-        <button class="nav-btn" onclick="switchTab('terminal', this)">💳 Терминал</button>
-        <button class="nav-btn fs-btn" onclick="toggleFullScreen()">⛶ Fullscreen</button>
-    </nav>
+    <div class="dev-nav">
+        <button onclick="showScreen('kiosk')" class="active">🍔 КИОСК</button>
+        <button onclick="showScreen('cashier')">💰 КАССА</button>
+        <button onclick="showScreen('kitchen')">👨‍🍳 КУХНЯ</button>
+        <button onclick="showScreen('display')">📺 ТАБЛО</button>
+        <button onclick="showScreen('terminal')">💳 СБЕР</button>
+    </div>
 
     <div id="kiosk" class="screen active">
-        <div class="pos-container">
-            <div class="menu-grid" id="kiosk-menu"></div>
-            <div class="order-sidebar">
-                <h2 style="margin:0">Ваш заказ</h2>
-                <div class="cart-items" id="kiosk-cart"></div>
-                <h3 id="kiosk-total">Итого: 0 ₽</h3>
-                <button class="btn-pay" onclick="sendToTerminal('kiosk')">ОПЛАТИТЬ</button>
-            </div>
+        <div style="background:var(--mcd-red); padding:15px; text-align:center; font-weight:bold;">ЗАКАЖИТЕ ЗДЕСЬ</div>
+        <div class="kiosk-grid" id="k-grid"></div>
+        <div style="background:#fff; color:#000; padding:20px; display:flex; justify-content:space-between; align-items:center;">
+            <div id="k-sum" style="font-size:24px; font-weight:bold;">0.00 ₽</div>
+            <button onclick="goToPay()" style="background:var(--mcd-red); color:#fff; border:none; padding:15px 30px; border-radius:30px; font-weight:bold; cursor:pointer;">ОПЛАТИТЬ</button>
         </div>
     </div>
 
     <div id="cashier" class="screen">
-        <div class="pos-container">
-            <div class="menu-grid" id="cashier-menu"></div>
-            <div class="order-sidebar" style="border-left: 8px solid var(--mcd-yellow)">
-                <div class="admin-panel">
-                    <strong style="font-size: 12px;">ДОБАВИТЬ ТОВАР В БАЗУ</strong>
-                    <input type="text" id="new-name" placeholder="Название (напр. Биг Тейсти)">
-                    <input type="number" id="new-price" placeholder="Цена (₽)">
-                    <input type="text" id="new-img" placeholder="Ссылка на фото (URL)">
-                    <button class="btn-add" onclick="addNewProduct()">СОХРАНИТЬ В FIREBASE</button>
+        <div class="cashier-main">
+            <div class="admin-box">
+                <input type="text" id="add-name" placeholder="Название">
+                <input type="number" id="add-price" placeholder="Цена">
+                <input type="text" id="add-img" placeholder="URL картинки">
+                <button onclick="saveToDb()" style="background:var(--sber-green); color:#fff; border:none; border-radius:5px; padding:0 15px; cursor:pointer;">ДОБАВИТЬ</button>
+            </div>
+            <div class="cashier-grid" id="c-grid"></div>
+        </div>
+        <div class="vfd-screen">
+            <div style="font-size:12px;">>>> K-DONALDS VFD SYSTEM <<<</div>
+            <div id="vfd-items" style="margin-top:20px; flex:1; overflow:hidden;"></div>
+            <div class="vfd-total" id="vfd-sum">0.00</div>
+            <button onclick="goToPay()" style="background:#0f0; color:#000; border:none; padding:15px; font-weight:bold; cursor:pointer; margin-top:10px;">ОПЛАТА</button>
+            <button onclick="clearCart()" style="color:#0f0; background:none; border:none; cursor:pointer; margin-top:5px;">[СБРОС]</button>
+        </div>
+    </div>
+
+    <div id="terminal" class="screen">
+        <div class="sber-ui">
+            <div class="sber-top"></div>
+            <div class="sber-body">
+                <p>К ОПЛАТЕ</p>
+                <h1 id="sber-sum" style="font-size:40px; margin:10px 0;">0.00 ₽</h1>
+                <div onclick="processPay()" style="cursor:pointer; margin-top:30px;">
+                    <img src="https://img.icons8.com/ios/100/contactless-payment.png" width="80" style="opacity:0.6;">
+                    <p style="font-size:12px; color:#999;">ПРИЛОЖИТЕ КАРТУ</p>
                 </div>
-                <h2 style="margin:0">Чек:</h2>
-                <div class="cart-items" id="cashier-cart"></div>
-                <h3 id="cashier-total">К оплате: 0 ₽</h3>
-                <button class="btn-pay" style="background: var(--dark)" onclick="sendToTerminal('cashier')">КАРТА</button>
-                <button onclick="clearCart()" style="margin-top:10px; background:none; border:none; color:red; cursor:pointer;">✖ Очистить чек</button>
             </div>
         </div>
     </div>
 
-    <div id="kitchen" class="screen"><h1 style="text-align:center">МОНИТОР КУХНИ</h1><div class="kitchen-grid" id="kitchen-orders"></div></div>
-    <div id="display" class="screen"><div class="display-container"><div class="column"><h2 style="color:var(--mcd-red)">ГОТОВИТСЯ</h2><div id="prep-numbers" class="number-list"></div></div><div class="column"><h2 style="color:var(--green)">ГОТОВО</h2><div id="ready-numbers" class="number-list ready-num"></div></div></div></div>
-    <div id="terminal" class="screen"><div class="terminal-wrap"><div id="term-msg">ОЖИДАНИЕ...</div><div id="term-amount" style="font-size: 45px; margin: 25px 0;">0.00 ₽</div><div class="card-reader" onclick="processPayment()">ПРИЛОЖИТЕ КАРТУ</div></div></div>
+    <div id="kitchen" class="screen">
+        <h1 style="color:var(--mcd-yellow);">ЗАКАЗЫ В РАБОТЕ</h1>
+        <div id="kit-list"></div>
+    </div>
+
+    <div id="display" class="screen">
+        <div class="tablo-col" style="border-right:1px solid #222;">
+            <h2 style="color:red;">ГОТОВИТСЯ</h2>
+            <div id="tab-prep" class="num-big" style="color:#444;"></div>
+        </div>
+        <div class="tablo-col">
+            <h2 style="color:var(--sber-green);">ГОТОВО</h2>
+            <div id="tab-ready" class="num-big" style="color:var(--mcd-yellow);"></div>
+        </div>
+    </div>
 
     <script>
         const firebaseConfig = {
@@ -122,133 +141,97 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
+        // Звук ICQ
+        const audio = new Audio('https://www.soundboard.com/handler/DownLoadTrack.ashx?cliptoken=80685955-468a-449e-998a-78567104b281');
+
         let cart = [];
         let total = 0;
+        let lastOrderCount = 0;
 
-        // --- ЛОГИКА ДОБАВЛЕНИЯ НОВОГО ТОВАРА В БАЗУ ---
-        function addNewProduct() {
-            const name = document.getElementById('new-name').value;
-            const price = document.getElementById('new-price').value;
-            const img = document.getElementById('new-img').value || 'https://img.icons8.com/plasticine/100/hamburger.png';
-
-            if (!name || !price) return alert("Введите название и цену!");
-
-            const productId = Date.now(); // уникальный ID на основе времени
-            db.ref('menu/' + productId).set({
-                name: name,
-                price: parseInt(price),
-                img: img
-            }).then(() => {
-                alert("Товар сохранен!");
-                document.getElementById('new-name').value = '';
-                document.getElementById('new-price').value = '';
-                document.getElementById('new-img').value = '';
-            });
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.dev-nav button').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
         }
 
-        // Удаление товара из базы
-        function deleteProduct(id) {
-            if(confirm("Удалить этот товар из меню?")) {
-                db.ref('menu/' + id).remove();
+        // Админка
+        function saveToDb() {
+            const n = document.getElementById('add-name').value;
+            const p = document.getElementById('add-price').value;
+            const i = document.getElementById('add-img').value || 'https://img.icons8.com/plasticine/100/hamburger.png';
+            if(n && p) {
+                db.ref('menu').push({ name: n, price: parseInt(p), img: i });
+                alert("Добавлено!");
             }
         }
 
-        // --- ЖИВОЕ ОБНОВЛЕНИЕ МЕНЮ ИЗ FIREBASE ---
+        // Меню
         db.ref('menu').on('value', snap => {
-            const products = snap.val();
-            const kioskGrid = document.getElementById('kiosk-menu');
-            const cashierGrid = document.getElementById('cashier-menu');
-            
-            kioskGrid.innerHTML = '';
-            cashierGrid.innerHTML = '';
-
-            if (!products) {
-                // Если база пуста, добавим пример
-                kioskGrid.innerHTML = '<p>Меню пусто. Добавьте товары на кассе.</p>';
-                return;
-            }
-
-            Object.keys(products).forEach(id => {
-                const item = products[id];
-                const html = `
-                    <div class="menu-item" onclick="addToCart('${item.name}', ${item.price})">
-                        <span class="delete-item" onclick="event.stopPropagation(); deleteProduct('${id}')">✖</span>
-                        <img src="${item.img}">
-                        <h3>${item.name}</h3>
-                        <p>${item.price} ₽</p>
-                    </div>`;
-                kioskGrid.innerHTML += html;
-                cashierGrid.innerHTML += html;
+            const items = snap.val() || {};
+            const k = document.getElementById('k-grid');
+            const c = document.getElementById('c-grid');
+            k.innerHTML = ''; c.innerHTML = '';
+            Object.values(items).forEach(item => {
+                k.innerHTML += `<div class="kiosk-card" onclick="add('${item.name}',${item.price})"><img src="${item.img}"><h3>${item.name}</h3><p>${item.price} ₽</p></div>`;
+                c.innerHTML += `<div class="c-btn" onclick="add('${item.name}',${item.price})">${item.name}<br>${item.price} ₽</div>`;
             });
         });
 
-        // --- ОСТАЛЬНАЯ ЛОГИКА (Киоск, Кухня, Терминал) ---
-        function addToCart(name, price) {
-            cart.push({name, price});
-            total += price;
-            updateUI();
+        function add(n, p) { cart.push({n, p}); total += p; refresh(); }
+        function clearCart() { cart = []; total = 0; refresh(); }
+
+        function refresh() {
+            document.getElementById('k-sum').innerText = total + ".00 ₽";
+            document.getElementById('vfd-sum').innerText = total + ".00";
+            document.getElementById('vfd-items').innerHTML = cart.map(i => `<div>${i.n.padEnd(15)} ${i.p}</div>`).join('');
         }
 
-        function updateUI() {
-            const rows = cart.map(i => `<div class="cart-row"><span>${i.name}</span><span>${i.price} ₽</span></div>`).join('');
-            document.getElementById('kiosk-cart').innerHTML = rows;
-            document.getElementById('cashier-cart').innerHTML = rows;
-            document.getElementById('kiosk-total').innerText = `Итого: ${total} ₽`;
-            document.getElementById('cashier-total').innerText = `К оплате: ${total} ₽`;
+        function goToPay() {
+            if(total === 0) return;
+            db.ref('system/terminal').set({ amount: total, items: cart.map(i => i.n) });
+            showScreen('terminal');
         }
-
-        function clearCart() { cart = []; total = 0; updateUI(); }
-
-        function sendToTerminal(from) {
-            if (total === 0) return alert("Корзина пуста");
-            db.ref('system/terminal').set({ amount: total, items: cart.map(i => i.name), status: 'waiting' });
-            switchTab('terminal', document.querySelectorAll('.nav-btn')[4]);
-        }
-
-        function processPayment() {
-            db.ref('system/terminal').once('value', snap => {
-                const val = snap.val();
-                if (!val || val.status !== 'waiting') return;
-                const orderId = Math.floor(Math.random() * 90) + 10;
-                db.ref('orders/' + orderId).set({ id: orderId, items: val.items, status: 'preparing' });
-                db.ref('system/terminal').remove();
-                clearCart();
-                alert("Оплачено! Заказ #" + orderId);
-                switchTab('kiosk', document.querySelectorAll('.nav-btn')[0]);
-            });
-        }
-
-        db.ref('orders').on('value', snap => {
-            const orders = snap.val() || {};
-            const kitchen = document.getElementById('kitchen-orders');
-            const prep = document.getElementById('prep-numbers');
-            const ready = document.getElementById('ready-numbers');
-            kitchen.innerHTML = ''; prep.innerHTML = ''; ready.innerHTML = '';
-            Object.values(orders).forEach(o => {
-                if (o.status === 'preparing') {
-                    kitchen.innerHTML += `<div class="order-card"><h3>#${o.id}</h3><p>${o.items.join(', ')}</p><button class="btn-pay" onclick="db.ref('orders/${o.id}').update({status:'ready'})">ГОТОВО</button></div>`;
-                    prep.innerHTML += `<span>${o.id}</span>`;
-                } else { ready.innerHTML += `<span>${o.id}</span>`; }
-            });
-        });
 
         db.ref('system/terminal').on('value', snap => {
             const v = snap.val();
-            document.getElementById('term-amount').innerText = v ? v.amount + ".00 ₽" : "0.00 ₽";
-            document.getElementById('term-msg').innerText = v ? "ВСТАВЬТЕ КАРТУ" : "СВОБОДЕН";
+            if(v) document.getElementById('sber-sum').innerText = v.amount + ".00 ₽";
         });
 
-        function switchTab(id, btn) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            btn.classList.add('active');
+        function processPay() {
+            db.ref('system/terminal').once('value', snap => {
+                const v = snap.val();
+                const id = Math.floor(Math.random()*900)+100;
+                db.ref('orders/'+id).set({ id, items: v.items, status: 'preparing' });
+                db.ref('system/terminal').remove();
+                clearCart();
+                showScreen('kiosk');
+            });
         }
 
-        function toggleFullScreen() {
-            if (!document.fullscreenElement) { document.documentElement.requestFullscreen(); } 
-            else { if (document.exitFullscreen) document.exitFullscreen(); }
-        }
+        // Кухня + Звук
+        db.ref('orders').on('value', snap => {
+            const orders = snap.val() || {};
+            const kit = document.getElementById('kit-list');
+            const prep = document.getElementById('tab-prep');
+            const ready = document.getElementById('tab-ready');
+            
+            // Если заказов стало больше - играем звук
+            const currentCount = Object.keys(orders).length;
+            if(currentCount > lastOrderCount) audio.play();
+            lastOrderCount = currentCount;
+
+            kit.innerHTML = ''; prep.innerHTML = ''; ready.innerHTML = '';
+            
+            Object.values(orders).forEach(o => {
+                if(o.status === 'preparing') {
+                    kit.innerHTML += `<div class="order-strip"><div><b style="font-size:24px">#${o.id}</b><br>${o.items.join(', ')}</div><button onclick="db.ref('orders/${o.id}').update({status:'ready'})" style="padding:10px 20px; background:var(--sber-green); color:#fff; border:none; border-radius:5px; cursor:pointer;">ГОТОВО</button></div>`;
+                    prep.innerHTML += `<div>${o.id}</div>`;
+                } else {
+                    ready.innerHTML += `<div>${o.id}</div>`;
+                }
+            });
+        });
     </script>
 </body>
 </html>
