@@ -2,144 +2,217 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Randomize Bot - Панель управления</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Randomize Bot Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --tg-blue: #24A1DE;
-            --bg: #f0f2f5;
-            --card: #ffffff;
-            --text: #1e293b;
+            --tg-blue: #37aee2;
+            --bg: #0f172a;
+            --card: #1e293b;
+            --input-bg: #334155;
+            --text: #f8fafc;
+            --text-dim: #94a3b8;
+            --accent: #10b981;
         }
 
         body {
             font-family: 'Manrope', sans-serif;
             background-color: var(--bg);
             color: var(--text);
+            margin: 0;
+            padding: 15px;
             display: flex;
             justify-content: center;
-            padding: 40px 20px;
-            margin: 0;
+            min-height: 100vh;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .app {
+            width: 100%;
+            max-width: 480px;
             background: var(--card);
-            max-width: 500px;
-            width: 100%;
-            padding: 40px;
-            border-radius: 24px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+            padding: 25px;
+            border-radius: 28px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            align-self: flex-start;
+            margin-top: 20px;
         }
 
-        .logo {
+        .header {
             text-align: center;
-            font-size: 24px;
-            font-weight: 800;
-            color: var(--tg-blue);
-            margin-bottom: 30px;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
+            margin-bottom: 25px;
         }
 
-        .logo small { font-size: 14px; color: #64748b; font-weight: 400; }
+        .header h1 {
+            font-size: 22px;
+            font-weight: 800;
+            margin: 0;
+            background: linear-gradient(90deg, #37aee2, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
-        .field { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; }
+        .header p {
+            font-size: 13px;
+            color: var(--text-dim);
+            margin-top: 5px;
+        }
 
-        input, textarea {
+        .field { margin-bottom: 18px; }
+        
+        label { 
+            display: block; 
+            margin-bottom: 8px; 
+            font-weight: 600; 
+            font-size: 13px; 
+            color: var(--text-dim);
+            padding-left: 5px;
+        }
+
+        input, textarea, select {
             width: 100%;
+            background: var(--input-bg);
+            border: 1px solid #475569;
+            border-radius: 16px;
             padding: 14px;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
+            color: white;
             font-size: 16px;
             box-sizing: border-box;
             font-family: inherit;
-            transition: 0.3s;
+            transition: all 0.2s;
         }
 
-        input:focus { border-color: var(--tg-blue); outline: none; }
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--tg-blue);
+            background: #3d4b5f;
+        }
 
         .btn {
             background: var(--tg-blue);
             color: white;
             border: none;
-            padding: 16px;
+            padding: 18px;
             width: 100%;
-            border-radius: 12px;
+            border-radius: 18px;
             font-size: 16px;
             font-weight: 700;
             cursor: pointer;
-            transition: 0.3s;
-            margin-top: 10px;
+            box-shadow: 0 10px 15px -3px rgba(55, 174, 226, 0.3);
+            transition: transform 0.2s, opacity 0.2s;
         }
 
-        .btn:hover { background: #0088cc; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(36,161,222,0.3); }
+        .btn:active { transform: scale(0.97); }
 
+        /* Панель статуса */
         .status {
-            margin-top: 30px;
+            margin-top: 25px;
             padding: 20px;
-            background: #f8fafc;
-            border-radius: 16px;
-            border: 1px solid #e2e8f0;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 20px;
             display: none;
+            text-align: center;
         }
 
-        .active-label { color: #059669; font-weight: 800; display: flex; align-items: center; gap: 5px; }
-        .count-box { font-size: 32px; font-weight: 800; margin: 10px 0; }
-        .timer { color: #e11d48; font-family: monospace; font-weight: bold; }
+        .pulse {
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            animation: pulse-green 2s infinite;
+        }
+
+        @keyframes pulse-green {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        .count {
+            font-size: 42px;
+            font-weight: 800;
+            margin: 10px 0;
+            color: white;
+        }
+
+        .timer-box {
+            font-size: 14px;
+            color: #fb7185;
+            background: rgba(251, 113, 133, 0.1);
+            padding: 8px 12px;
+            border-radius: 10px;
+            display: inline-block;
+            font-weight: 700;
+        }
+
+        .warning-text {
+            font-size: 11px;
+            color: var(--text-dim);
+            margin-top: 15px;
+            line-height: 1.4;
+        }
     </style>
 </head>
 <body>
 
 <div class="app">
-    <div class="logo">
-        Randomize Bot
-        <small>Сервис мгновенных розыгрышей</small>
-    </div>
-    
-    <div class="field">
-        <label>Юзернейм канала</label>
-        <input type="text" id="channel" placeholder="@название_канала">
+    <div class="header">
+        <h1>Randomize Panel</h1>
+        <p>Управление розыгрышами в Telegram</p>
     </div>
 
-    <div class="field">
-        <label>Текст сообщения</label>
-        <textarea id="msg" rows="3">Привет! Нажми кнопку ниже, чтобы участвовать в розыгрыше приза! 🎁</textarea>
-    </div>
+    <div id="form-side">
+        <div class="field">
+            <label>Юзернейм канала</label>
+            <input type="text" id="channel" placeholder="@channel_name" inputmode="text">
+        </div>
 
-    <div class="field">
-        <label>Когда подвести итоги?</label>
-        <input type="datetime-local" id="date">
-    </div>
+        <div class="field">
+            <label>Текст розыгрыша</label>
+            <textarea id="msg" rows="3">🎁 Участвуй в розыгрыше! Нажми кнопку ниже.</textarea>
+        </div>
 
-    <button class="btn" onclick="start()">Опубликовать в канал</button>
+        <div class="field">
+            <label>Дата и время финала</label>
+            <input type="datetime-local" id="date">
+        </div>
+
+        <button class="btn" onclick="start()">Запустить в канал</button>
+    </div>
 
     <div id="statusBox" class="status">
-        <div class="active-label">● РОЗЫГРЫШ ИДЕТ</div>
-        <div class="count-box"><span id="pCount">0</span> <small style="font-size: 14px; font-weight: 400; color: #64748b;">участников</small></div>
-        <div style="font-size: 13px; color: #64748b;">До финала: <span class="timer" id="timeLeft">--:--:--</span></div>
-        <p style="font-size: 11px; margin-top: 15px; color: #94a3b8;">* Не закрывайте эту страницу до завершения времени</p>
+        <div style="font-size: 12px; color: var(--accent); font-weight: 700; letter-spacing: 1px;">
+            <span class="pulse"></span> В ЭФИРЕ
+        </div>
+        <div class="count" id="pCount">0</div>
+        <div style="color: var(--text-dim); margin-bottom: 15px; font-size: 14px;">участников собрано</div>
+        <div class="timer-box" id="timeLeft">00:00:00</div>
+        <p class="warning-text">⚠️ Не закрывайте страницу и не выключайте экран телефона до окончания времени, иначе бот не пришлет победителя.</p>
     </div>
 </div>
 
 <script>
-    // === ВСТАВЬТЕ ВАШ ТОКЕН СЮДА ===
-    const BOT_TOKEN = 'ВАШ_ТОКЕН_ЗДЕСЬ'; 
-    // ===============================
+    // ВСТАВЬТЕ ТОКЕН БОТА СЮДА
+    const BOT_TOKEN = '8320870833:AAF6OHDeYVvHkIw5U_hRdkq6LZcW0hiPNzQ'; 
 
     let participants = new Set();
     let isLive = false;
     let lastId = 0;
-    let botName = "";
 
     async function call(method, body = {}) {
-        const r = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/${method}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(body)
-        });
-        return await r.json();
+        try {
+            const r = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/${method}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            return await r.json();
+        } catch (e) { return { ok: false }; }
     }
 
     async function start() {
@@ -147,63 +220,58 @@
         const text = document.getElementById('msg').value;
         const targetDate = new Date(document.getElementById('date').value);
 
-        if (!channel.startsWith('@')) return alert("Юзернейм должен начинаться с @");
-        if (isNaN(targetDate)) return alert("Выберите дату!");
+        if (!channel.startsWith('@')) return alert("Введите @юзернейм канала");
+        if (isNaN(targetDate)) return alert("Выберите время!");
 
-        // Получаем инфо о боте
         const me = await call('getMe');
-        if (!me.ok) return alert("Ошибка токена! Проверьте переменную BOT_TOKEN в коде.");
-        botName = me.result.username;
+        if (!me.ok) return alert("Ошибка: Проверьте BOT_TOKEN в коде!");
 
-        // Отправляем пост
         const post = await call('sendMessage', {
             chat_id: channel,
             text: text,
             reply_markup: {
                 inline_keyboard: [[
-                    { text: "Участвовать! 🙋‍♂️", url: `https://t.me/${botName}?start=join` }
+                    { text: "Участвовать! 🙋‍♂️", url: `https://t.me/${me.result.username}?start=join` }
                 ]]
             }
         });
 
         if (post.ok) {
+            document.getElementById('form-side').style.display = 'none';
             document.getElementById('statusBox').style.display = 'block';
             isLive = true;
-            runEngine(targetDate, channel);
+            run(targetDate, channel);
         } else {
-            alert("Ошибка: убедитесь, что бот добавлен в канал " + channel + " как администратор.");
+            alert("Ошибка! Проверьте, что бот админ в канале " + channel);
         }
     }
 
-    function runEngine(targetDate, channel) {
+    function run(targetDate, channel) {
         const timer = setInterval(async () => {
             if (!isLive) return clearInterval(timer);
 
             const now = new Date();
             const diff = targetDate - now;
 
-            // 1. Проверка времени
             if (diff <= 0) {
                 isLive = false;
                 finish(channel);
                 return;
             }
 
-            // 2. Обновление таймера
             const h = Math.floor(diff / 3600000);
             const m = Math.floor((diff % 3600000) / 60000);
             const s = Math.floor((diff % 60000) / 1000);
-            document.getElementById('timeLeft').innerText = `${h}ч ${m}м ${s}с`;
+            document.getElementById('timeLeft').innerText = 
+                `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
 
-            // 3. Сбор участников
-            const upd = await call('getUpdates', { offset: lastId + 1 });
+            const upd = await call('getUpdates', { offset: lastId + 1, timeout: 0 });
             if (upd.result) {
                 upd.result.forEach(u => {
                     lastId = u.update_id;
                     if (u.message && u.message.text === '/start join') {
                         const user = u.message.from;
-                        const label = user.first_name + (user.username ? ` (@${user.username})` : ` (ID:${user.id})`);
-                        participants.add(label);
+                        participants.add(user.first_name + (user.username ? ` (@${user.username})` : ` (ID:${user.id})`));
                     }
                 });
                 document.getElementById('pCount').innerText = participants.size;
@@ -212,27 +280,17 @@
     }
 
     async function finish(channel) {
-        const all = Array.from(participants);
-        let winText = "";
-
-        if (all.length === 0) {
-            winText = "⌛ Розыгрыш завершен, но участников не было.";
-        } else {
-            const winner = all[Math.floor(Math.random() * all.length)];
-            winText = `🎉 **РОЗЫГРЫШ ЗАВЕРШЕН!**\n\n🏆 Победитель: ${winner}\nКоличество участников: ${all.length}\n\nПоздравляем! 👏`;
+        const list = Array.from(participants);
+        let msg = "⌛ Участников не было.";
+        
+        if (list.length > 0) {
+            const winner = list[Math.floor(Math.random() * list.length)];
+            msg = `🎊 **ИТОГИ РОЗЫГРЫША** 🎊\n\n🏆 Победитель: ${winner}\n🔥 Всего участников: ${list.length}\n\nПоздравляем!`;
         }
 
-        await call('sendMessage', {
-            chat_id: channel,
-            text: winText,
-            parse_mode: 'Markdown'
-        });
-
-        alert("Победитель определен и опубликован в канале!");
-        document.querySelector('.active-label').innerText = "● ЗАВЕРШЕНО";
-        document.querySelector('.active-label').style.color = "#64748b";
+        await call('sendMessage', { chat_id: channel, text: msg, parse_mode: 'Markdown' });
+        document.getElementById('timeLeft').innerText = "ЗАВЕРШЕНО";
     }
 </script>
-
 </body>
 </html>
