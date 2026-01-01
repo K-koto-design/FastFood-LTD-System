@@ -2,502 +2,237 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Kiosk Interface System</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <title>Randomize Bot - Панель управления</title>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        /* --- НАСТРОЙКИ ДИЗАЙНА (COLORS) --- */
         :root {
-            --mcd-green: #0a3314; /* Тот самый темно-зеленый */
-            --mcd-yellow: #ffbc0d; /* Желтый логотип */
-            --mcd-red: #da291c;
-            --mcd-grey-header: #e0e0e0;
-            --mcd-green-header: #4ca84a;
-            --text-white: #ffffff;
-            --bg-light: #f5f5f5;
+            --tg-blue: #24A1DE;
+            --bg: #f0f2f5;
+            --card: #ffffff;
+            --text: #1e293b;
         }
 
-        body, html {
-            margin: 0; padding: 0;
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            height: 100%; width: 100%;
-            overflow: hidden;
-            background-color: #000;
+        body {
+            font-family: 'Manrope', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+            margin: 0;
         }
 
-        /* УТИЛИТЫ */
-        .hidden { display: none !important; }
-        .flex { display: flex; }
-        .center { align-items: center; justify-content: center; }
-        .col { flex-direction: column; }
-        .full-screen { width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; }
-
-        /* ЛОГОТИП (SVG) */
-        .logo-m {
-            width: 80px; height: 80px;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 115 100'%3E%3Cpath fill='%23ffbc0d' d='M96.7 54.4c-1.3-8.4-4.8-15.6-9.3-15.6s-6.8 5.4-8.1 11.2c-2.4-15.8-9-27.4-18.7-27.4-9.3 0-16.7 11.3-19.1 27.8-1.7-8.8-5.7-16.1-10.4-16.1s-8 7.2-9.3 15.6c-1.8 11.8.8 45.4 1.3 49.6h11.9c0-10.8-2.6-35.1-1.3-43.7 1-6.6 4.2-4.1 4.7.4.9 8.2 3.1 33.1 3.1 43.3h12.5c0-14.7-3.9-38.6-2.6-47.5 1.1-7.2 4.7-5.1 5.3-.4.8 6.7 3.5 30.1 3.5 47.9h12.5c.9-10.9 2.5-38.3 1.3-49.6z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: center;
-            background-size: contain;
+        .app {
+            background: var(--card);
+            max-width: 500px;
+            width: 100%;
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
         }
 
-        /* --- ЭКРАН 1: SPLASH / START --- */
-        #view-start {
-            background-color: var(--bg-light);
-            display: flex; flex-direction: column; justify-content: space-between;
-        }
-        .ad-container {
-            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-        }
-        .ad-container img { width: 60%; max-width: 400px; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.2)); }
-        .ad-text { font-size: 3rem; font-weight: bold; margin-top: 20px; color: #333; }
-        .start-footer {
-            background-color: var(--mcd-green);
-            height: 25%;
-            border-top-left-radius: 20px; border-top-right-radius: 20px;
-            display: flex; align-items: center; justify-content: center; gap: 20px;
-            color: white; cursor: pointer;
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.3);
-            animation: pulseFooter 2s infinite;
-        }
-        @keyframes pulseFooter { 0% { background: var(--mcd-green); } 50% { background: #0f4b1d; } 100% { background: var(--mcd-green); } }
-
-        /* --- ЭКРАН 2: ВЫБОР (EAT IN / TAKE OUT) --- */
-        #view-dine-opt {
-            background-color: var(--mcd-green);
-            color: white;
+        .logo {
             text-align: center;
-        }
-        .dine-header { font-size: 2rem; margin-top: 50px; margin-bottom: 40px; font-weight: 300; }
-        .dine-options { display: flex; gap: 40px; justify-content: center; flex-wrap: wrap;}
-        .dine-card {
-            background: #d8d8d8;
-            width: 220px; height: 280px;
-            border-radius: 15px;
-            display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
-            cursor: pointer; position: relative;
-            transition: transform 0.2s;
-        }
-        .dine-card:active { transform: scale(0.95); }
-        .dine-card img, .dine-card i { font-size: 100px; color: #333; margin-bottom: 40px; }
-        /* Имитация графики подноса и пакета CSS-ом или иконками */
-        .dine-card-label {
-            background: var(--mcd-green); width: 100%; color: white; padding: 15px 0;
-            border-bottom-left-radius: 15px; border-bottom-right-radius: 15px;
-            font-size: 1.2rem;
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--tg-blue);
+            margin-bottom: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
         }
 
-        /* --- ЭКРАН 3: МЕНЮ (КИОСК) --- */
-        #view-menu {
-            background: white;
-            display: flex; flex-direction: column;
-        }
-        .menu-header {
-            background: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05); z-index: 10;
-        }
-        .menu-body { flex: 1; display: flex; overflow: hidden; }
-        
-        /* Сайдбар категорий */
-        .category-sidebar {
-            width: 120px; background: #f9f9f9; overflow-y: auto;
-            border-right: 1px solid #ddd;
-            display: flex; flex-direction: column; align-items: center; padding-top: 10px;
-        }
-        .cat-item { margin-bottom: 20px; text-align: center; opacity: 0.6; cursor: pointer; }
-        .cat-item.active { opacity: 1; transform: scale(1.1); }
-        .cat-img { width: 60px; height: 60px; object-fit: contain; display: block; margin: 0 auto; }
-        .cat-name { font-size: 0.8rem; font-weight: bold; margin-top: 5px; color: black; }
+        .logo small { font-size: 14px; color: #64748b; font-weight: 400; }
 
-        /* Сетка товаров */
-        .products-grid {
-            flex: 1; background: #fff; padding: 20px; overflow-y: auto;
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px;
-            align-content: start;
-        }
-        .product-card {
-            display: flex; flex-direction: column; align-items: center;
-            text-align: center; cursor: pointer;
-        }
-        .p-img { width: 100%; height: 120px; object-fit: contain; margin-bottom: 10px; transition: 0.2s;}
-        .product-card:active .p-img { transform: scale(0.9); }
-        .p-name { font-weight: bold; font-size: 1rem; line-height: 1.2; margin-bottom: 5px; }
-        .p-price { font-weight: bold; color: #333; }
+        .field { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; }
 
-        /* Нижний бар заказа */
-        .order-bar {
-            background: var(--mcd-green); color: white;
-            padding: 15px 20px; display: flex; justify-content: space-between; align-items: center;
+        input, textarea {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 16px;
+            box-sizing: border-box;
+            font-family: inherit;
+            transition: 0.3s;
+        }
+
+        input:focus { border-color: var(--tg-blue); outline: none; }
+
+        .btn {
+            background: var(--tg-blue);
+            color: white;
+            border: none;
+            padding: 16px;
+            width: 100%;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
             cursor: pointer;
-        }
-        .btn-next {
-            background: #0f4b1d; padding: 10px 30px; border-radius: 30px; font-weight: bold; border: 1px solid rgba(255,255,255,0.2);
-        }
-
-        /* --- ЭКРАН 4: ИТОГ/ОПЛАТА (ТЕМНО-ЗЕЛЕНЫЙ СПИСОК) --- */
-        #view-cart {
-            background: var(--mcd-green); color: white;
-            padding: 30px; display: flex; flex-direction: column;
-        }
-        .cart-title { font-size: 2rem; font-weight: bold; margin-bottom: 5px; }
-        .cart-subtitle { font-size: 1rem; opacity: 0.8; margin-bottom: 30px; }
-        .cart-list { flex: 1; overflow-y: auto; }
-        .cart-item { font-size: 1.5rem; font-weight: bold; margin-bottom: 10px; display: flex; justify-content: space-between; }
-        .total-price { font-size: 2rem; margin-top: 20px; text-align: right; margin-bottom: 20px; }
-        .btn-pay {
-            background: var(--mcd-red); color: white; text-align: center; padding: 20px;
-            border-radius: 10px; font-size: 1.5rem; font-weight: bold; cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
         }
 
-        /* --- ЭКРАН 5: PINPAD (ТЕРМИНАЛ) --- */
-        #view-pinpad {
-            background: var(--mcd-green);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            color: white; text-align: center;
-        }
-        .pin-instr { font-size: 1.5rem; font-weight: bold; margin: 40px 0; max-width: 80%; line-height: 1.4; }
-        .pin-instr-en { font-size: 1.2rem; font-weight: bold; font-family: 'Times New Roman', serif; opacity: 0.9; max-width: 80%; }
-        
-        #view-pin-success {
-            background: var(--mcd-green);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            color: white;
+        .btn:hover { background: #0088cc; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(36,161,222,0.3); }
+
+        .status {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            display: none;
         }
 
-        /* --- ЭКРАН 6: ТАБЛО (BOARD) --- */
-        #view-board { background: #000; flex-direction: row; }
-        .board-panel { flex: 1; display: flex; flex-direction: column; }
-        .board-header { padding: 15px; font-size: 2rem; font-weight: bold; color: #333; text-transform: uppercase; }
-        .bg-grey { background: var(--mcd-grey-header); }
-        .bg-green { background: var(--mcd-green-header); color: white; }
-        .board-content { background: white; flex: 1; padding: 20px; display: flex; flex-wrap: wrap; align-content: flex-start; gap: 20px; }
-        .board-order-num { font-size: 3rem; font-weight: bold; width: 100%; }
-
-        /* --- ЭКРАН 7: LOGIN (ADMIN) --- */
-        #view-login {
-            background: linear-gradient(135deg, #2b8ce6, #1cd4a6);
-            color: white;
-            align-items: center; justify-content: center;
-        }
-        .pin-dots { display: flex; gap: 15px; margin: 40px 0; }
-        .dot { width: 15px; height: 15px; border: 2px solid white; border-radius: 50%; }
-        .dot.filled { background: white; }
-        .numpad { display: grid; grid-template-columns: repeat(3, 80px); gap: 20px; }
-        .num-btn {
-            width: 80px; height: 80px; border-radius: 50%; background: rgba(255,255,255,0.2);
-            display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer;
-            transition: background 0.2s;
-        }
-        .num-btn:active { background: rgba(255,255,255,0.4); }
-
-        /* --- MEDIA QUERIES (АДАПТАЦИЯ) --- */
-        @media (max-width: 768px) {
-            /* Mobile adjustments */
-            .dine-options { flex-direction: row; gap: 15px; }
-            .dine-card { width: 45vw; height: 200px; }
-            .dine-card img, .dine-card i { font-size: 60px; margin-bottom: 20px; }
-            .dine-card-label { font-size: 1rem; padding: 10px 0; }
-
-            /* Menu on mobile: Categories top, grid below */
-            #view-menu .menu-body { flex-direction: column; }
-            .category-sidebar {
-                width: 100%; height: 90px; flex-direction: row; border-right: none; border-bottom: 1px solid #ddd;
-                overflow-x: auto; overflow-y: hidden; white-space: nowrap; padding: 10px 0;
-            }
-            .cat-item { margin: 0 15px; display: inline-block; }
-            
-            /* Board mobile */
-            #view-board { flex-direction: column; }
-            .board-panel { height: 50%; }
-            .board-header { font-size: 1.5rem; padding: 10px; }
-        }
-        
-        /* Кнопка навигации для демо (чтобы ты мог переключаться) */
-        #dev-nav {
-            position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(0,0,0,0.8);
-            display: flex; overflow-x: auto; padding: 10px; z-index: 9999;
-        }
-        #dev-nav button {
-            background: #333; color: white; border: 1px solid #555; padding: 5px 10px; margin-right: 5px; cursor: pointer; white-space: nowrap;
-        }
-        #dev-nav button.active { background: var(--mcd-yellow); color: black; }
-
+        .active-label { color: #059669; font-weight: 800; display: flex; align-items: center; gap: 5px; }
+        .count-box { font-size: 32px; font-weight: 800; margin: 10px 0; }
+        .timer { color: #e11d48; font-family: monospace; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div id="view-start" class="full-screen col">
-        <div class="ad-container">
-            <img src="https://s7d1.scene7.com/is/image/mcdonalds/DC_202002_8932_MediumFries_832x472:product-header-desktop?wid=830&hei=456&dpr=off" alt="Fries">
-            <div class="ad-text">Картофель фри</div>
-        </div>
-        <div class="start-footer" onclick="goTo('view-dine-opt')">
-            <div class="logo-m" style="width: 50px; height: 50px;"></div>
-            <div style="text-align: left;">
-                <div style="font-size: 1.2rem; font-weight: bold;">Нажмите, чтобы начать</div>
-                <div style="font-size: 0.8rem;">Не забудьте отсканировать QR-code</div>
-            </div>
-        </div>
+<div class="app">
+    <div class="logo">
+        Randomize Bot
+        <small>Сервис мгновенных розыгрышей</small>
+    </div>
+    
+    <div class="field">
+        <label>Юзернейм канала</label>
+        <input type="text" id="channel" placeholder="@название_канала">
     </div>
 
-    <div id="view-dine-opt" class="full-screen hidden col center">
-        <h1 class="dine-header">Выберите, где хотите поесть.</h1>
-        <div class="dine-options">
-            <div class="dine-card" onclick="selectDine('tray')">
-                <i class="fas fa-utensils"></i> <div class="dine-card-label">На подносе</div>
-            </div>
-            <div class="dine-card" onclick="selectDine('bag')">
-                <i class="fas fa-shopping-bag"></i> <div class="dine-card-label" style="background: #c59347; color: white;">С собой</div> </div>
-        </div>
-        <div style="margin-top: 50px;">
-            <span style="font-size: 2rem; font-weight: bold;">Язык</span>
-            <div style="background: #ccc; color: black; padding: 10px 20px; border-radius: 10px; display: inline-block; margin-top: 10px; font-weight: bold; font-size: 1.5rem;">RU</div>
-        </div>
+    <div class="field">
+        <label>Текст сообщения</label>
+        <textarea id="msg" rows="3">Привет! Нажми кнопку ниже, чтобы участвовать в розыгрыше приза! 🎁</textarea>
     </div>
 
-    <div id="view-menu" class="full-screen hidden">
-        <div class="menu-header">
-            <div class="logo-m" style="width: 50px; height: 50px;"></div>
-            <h2 style="margin: 0;">Стартеры</h2>
-            <div></div> </div>
-        <div class="menu-body">
-            <div class="category-sidebar">
-                <div class="cat-item active">
-                    <img src="https://s7d1.scene7.com/is/image/mcdonalds/DC_202002_8932_MediumFries_832x472:product-header-desktop?wid=830&hei=456&dpr=off" class="cat-img">
-                    <div class="cat-name">Картофель</div>
-                </div>
-                <div class="cat-item">
-                    <img src="https://s7d1.scene7.com/is/image/mcdonalds/DC_201907_0005_BigMac_832x472:product-header-desktop?wid=830&hei=458&dpr=off" class="cat-img">
-                    <div class="cat-name">Бургеры</div>
-                </div>
-                <div class="cat-item">
-                    <img src="https://s7d1.scene7.com/is/image/mcdonalds/DC_202004_0459_4PieceMcNuggets_832x472:product-header-desktop?wid=830&hei=456&dpr=off" class="cat-img">
-                    <div class="cat-name">Наггетсы</div>
-                </div>
-                 <div class="cat-item">
-                    <img src="https://s7d1.scene7.com/is/image/mcdonalds/DC_202112_0523_MediumCoke_Glass_832x472:product-header-desktop?wid=830&hei=458&dpr=off" class="cat-img">
-                    <div class="cat-name">Напитки</div>
-                </div>
-            </div>
-            <div class="products-grid">
-                <div class="product-card" onclick="addToCart('Картофель Фри', 99)">
-                    <img src="https://s7d1.scene7.com/is/image/mcdonalds/DC_202002_8932_MediumFries_832x472:product-header-desktop?wid=830&hei=456&dpr=off" class="p-img">
-                    <div class="p-name">Картофель<br>фри</div>
-                    <div class="p-price">99 руб</div>
-                </div>
-                <div class="product-card" onclick="addToCart('Наггетсы (6)', 99)">
-                    <img src="https://s7d1.scene7.com/is/image/mcdonalds/DC_202004_0459_4PieceMcNuggets_832x472:product-header-desktop?wid=830&hei=456&dpr=off" class="p-img">
-                    <div class="p-name">Наггетсы<br>(6 шт)</div>
-                    <div class="p-price">99 руб</div>
-                </div>
-                 <div class="product-card" onclick="addToCart('Биг Мак', 165)">
-                    <img src="https://s7d1.scene7.com/is/image/mcdonalds/DC_201907_0005_BigMac_832x472:product-header-desktop?wid=830&hei=458&dpr=off" class="p-img">
-                    <div class="p-name">Биг Мак</div>
-                    <div class="p-price">165 руб</div>
-                </div>
-                 <div class="product-card" onclick="addToCart('Кока-Кола', 89)">
-                    <img src="https://s7d1.scene7.com/is/image/mcdonalds/DC_202112_0523_MediumCoke_Glass_832x472:product-header-desktop?wid=830&hei=458&dpr=off" class="p-img">
-                    <div class="p-name">Кока-Кола</div>
-                    <div class="p-price">89 руб</div>
-                </div>
-            </div>
-        </div>
-        <div class="order-bar" onclick="goTo('view-cart')">
-            <div id="mini-cart-text" style="font-weight: bold; font-size: 1.2rem;">Заказ пуст</div>
-            <div class="btn-next">Далее</div>
-        </div>
+    <div class="field">
+        <label>Когда подвести итоги?</label>
+        <input type="datetime-local" id="date">
     </div>
 
-    <div id="view-cart" class="full-screen hidden">
-        <div class="logo-m" style="width: 100px; height: 100px; margin: 0 auto;"></div>
-        <div class="cart-title">Ваш заказ</div>
-        <div class="cart-subtitle">Проверьте</div>
-        
-        <div class="cart-list" id="cart-items-container">
-            </div>
+    <button class="btn" onclick="start()">Опубликовать в канал</button>
 
-        <div class="total-price" id="total-price-display">ИТОГО: 0 руб.</div>
-        <div class="btn-pay" onclick="goTo('view-pinpad')">Оплата</div>
+    <div id="statusBox" class="status">
+        <div class="active-label">● РОЗЫГРЫШ ИДЕТ</div>
+        <div class="count-box"><span id="pCount">0</span> <small style="font-size: 14px; font-weight: 400; color: #64748b;">участников</small></div>
+        <div style="font-size: 13px; color: #64748b;">До финала: <span class="timer" id="timeLeft">--:--:--</span></div>
+        <p style="font-size: 11px; margin-top: 15px; color: #94a3b8;">* Не закрывайте эту страницу до завершения времени</p>
     </div>
+</div>
 
-    <div id="view-pinpad" class="full-screen hidden">
-        <div class="logo-m" style="width: 120px; height: 120px; margin-bottom: 50px;"></div>
-        <div class="pin-instr">Вставьте карту, следуйте инструкциям на пин-паде</div>
-        <div class="pin-instr-en">Insert card, follow instructions on PinPad screen</div>
-        
-        <button onclick="processPayment()" style="margin-top: 50px; background: transparent; border: 1px solid rgba(255,255,255,0.3); color: white; padding: 10px;">(Simulate Card Insert)</button>
-    </div>
+<script>
+    // === ВСТАВЬТЕ ВАШ ТОКЕН СЮДА ===
+    const BOT_TOKEN = 'ВАШ_ТОКЕН_ЗДЕСЬ'; 
+    // ===============================
 
-    <div id="view-pin-success" class="full-screen hidden">
-        <div class="logo-m" style="width: 120px; height: 120px; margin-bottom: 30px;"></div>
-        <h1 style="font-size: 3rem; margin-bottom: 10px;">Успешно.</h1>
-        <h2 style="font-size: 2.5rem;">Ваш заказ: <span id="final-order-id">001</span></h2>
-        <p style="max-width: 60%; text-align: center; font-size: 1.2rem; margin-top: 20px;">Вы можете наблюдать за его статусом на экране с заказами.</p>
-        <button onclick="resetKiosk()" style="margin-top: 40px; background: white; color: black; border: none; padding: 15px 30px; font-size: 1.2rem; border-radius: 30px;">Новый заказ</button>
-    </div>
+    let participants = new Set();
+    let isLive = false;
+    let lastId = 0;
+    let botName = "";
 
-    <div id="view-board" class="full-screen hidden">
-        <div class="board-panel">
-            <div class="board-header bg-grey">Готовится</div>
-            <div class="board-content" id="board-prep-list">
-                </div>
-        </div>
-        <div class="board-panel">
-            <div class="board-header bg-green">Готово</div>
-            <div class="board-content" id="board-ready-list">
-                </div>
-        </div>
-    </div>
+    async function call(method, body = {}) {
+        const r = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/${method}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        });
+        return await r.json();
+    }
 
-    <div id="view-login" class="full-screen hidden col">
-        <h1 style="margin-bottom: 5px;">Здравствуйте</h1>
-        <p style="opacity: 0.8; margin-bottom: 20px;">Введите ПИН-код для подтверждения</p>
-        
-        <div class="pin-dots">
-            <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-        </div>
+    async function start() {
+        const channel = document.getElementById('channel').value;
+        const text = document.getElementById('msg').value;
+        const targetDate = new Date(document.getElementById('date').value);
 
-        <div class="numpad">
-            <div class="num-btn">1</div><div class="num-btn">2</div><div class="num-btn">3</div>
-            <div class="num-btn">4</div><div class="num-btn">5</div><div class="num-btn">6</div>
-            <div class="num-btn">7</div><div class="num-btn">8</div><div class="num-btn">9</div>
-            <div></div><div class="num-btn">0</div><div class="num-btn"><i class="fas fa-backspace"></i></div>
-        </div>
-        <p style="margin-top: 30px; opacity: 0.6; cursor: pointer;" onclick="goTo('view-start')">Сменить пользователя (Exit)</p>
-    </div>
+        if (!channel.startsWith('@')) return alert("Юзернейм должен начинаться с @");
+        if (isNaN(targetDate)) return alert("Выберите дату!");
 
-    <div id="dev-nav">
-        <button onclick="goTo('view-start')">Start</button>
-        <button onclick="goTo('view-dine-opt')">DineType</button>
-        <button onclick="goTo('view-menu')">Menu</button>
-        <button onclick="goTo('view-cart')">Cart</button>
-        <button onclick="goTo('view-pinpad')">PinPad</button>
-        <button onclick="goTo('view-board')">Board</button>
-        <button onclick="goTo('view-login')">Login</button>
-    </div>
+        // Получаем инфо о боте
+        const me = await call('getMe');
+        if (!me.ok) return alert("Ошибка токена! Проверьте переменную BOT_TOKEN в коде.");
+        botName = me.result.username;
 
-    <script>
-        /* --- LOGIC --- */
-        let cart = [];
-        let total = 0;
-        let currentOrderId = 0;
-        
-        // Массив заказов для Табло
-        let activeOrders = [
-            {id: '098', status: 'ready'},
-            {id: '099', status: 'ready'},
-            {id: '100', status: 'prep'},
-        ];
+        // Отправляем пост
+        const post = await call('sendMessage', {
+            chat_id: channel,
+            text: text,
+            reply_markup: {
+                inline_keyboard: [[
+                    { text: "Участвовать! 🙋‍♂️", url: `https://t.me/${botName}?start=join` }
+                ]]
+            }
+        });
 
-        function goTo(viewId) {
-            document.querySelectorAll('.full-screen').forEach(el => el.classList.add('hidden'));
-            document.getElementById(viewId).classList.remove('hidden');
-            
-            // Если перешли на Табло - обновить его
-            if(viewId === 'view-board') renderBoard();
+        if (post.ok) {
+            document.getElementById('statusBox').style.display = 'block';
+            isLive = true;
+            runEngine(targetDate, channel);
+        } else {
+            alert("Ошибка: убедитесь, что бот добавлен в канал " + channel + " как администратор.");
         }
+    }
 
-        function selectDine(type) {
-            // Тип: 'tray' или 'bag'
-            goTo('view-menu');
-        }
+    function runEngine(targetDate, channel) {
+        const timer = setInterval(async () => {
+            if (!isLive) return clearInterval(timer);
 
-        function addToCart(name, price) {
-            cart.push({name, price});
-            total += price;
-            updateCartUI();
-        }
+            const now = new Date();
+            const diff = targetDate - now;
 
-        function updateCartUI() {
-            // Mini cart on menu
-            const miniText = document.getElementById('mini-cart-text');
-            if(cart.length > 0) {
-                // Группируем для красоты "Картофель фри x1"
-                miniText.innerHTML = `${cart[cart.length-1].name} <span style="font-weight:normal; opacity:0.8">+ ${cart.length-1} еще</span>`;
-            } else {
-                miniText.innerText = "Заказ пуст";
+            // 1. Проверка времени
+            if (diff <= 0) {
+                isLive = false;
+                finish(channel);
+                return;
             }
 
-            // Main Cart Screen
-            const container = document.getElementById('cart-items-container');
-            container.innerHTML = '';
-            
-            // Группировка
-            const counts = {};
-            cart.forEach(x => { counts[x.name] = (counts[x.name] || 0) + 1; });
-            
-            for (const [name, count] of Object.entries(counts)) {
-                container.innerHTML += `
-                    <div class="cart-item">
-                        <span>x${count} ${name}</span>
-                    </div>
-                `;
+            // 2. Обновление таймера
+            const h = Math.floor(diff / 3600000);
+            const m = Math.floor((diff % 3600000) / 60000);
+            const s = Math.floor((diff % 60000) / 1000);
+            document.getElementById('timeLeft').innerText = `${h}ч ${m}м ${s}с`;
+
+            // 3. Сбор участников
+            const upd = await call('getUpdates', { offset: lastId + 1 });
+            if (upd.result) {
+                upd.result.forEach(u => {
+                    lastId = u.update_id;
+                    if (u.message && u.message.text === '/start join') {
+                        const user = u.message.from;
+                        const label = user.first_name + (user.username ? ` (@${user.username})` : ` (ID:${user.id})`);
+                        participants.add(label);
+                    }
+                });
+                document.getElementById('pCount').innerText = participants.size;
             }
+        }, 3000);
+    }
 
-            document.getElementById('total-price-display').innerText = `ИТОГО: ${total} руб.`;
+    async function finish(channel) {
+        const all = Array.from(participants);
+        let winText = "";
+
+        if (all.length === 0) {
+            winText = "⌛ Розыгрыш завершен, но участников не было.";
+        } else {
+            const winner = all[Math.floor(Math.random() * all.length)];
+            winText = `🎉 **РОЗЫГРЫШ ЗАВЕРШЕН!**\n\n🏆 Победитель: ${winner}\nКоличество участников: ${all.length}\n\nПоздравляем! 👏`;
         }
 
-        function processPayment() {
-            // Имитация задержки банка
-            setTimeout(() => {
-                currentOrderId = String(Math.floor(Math.random() * 900) + 100); // 100-999
-                document.getElementById('final-order-id').innerText = currentOrderId;
-                
-                // Добавляем в "систему" заказов
-                activeOrders.push({id: currentOrderId, status: 'prep'});
-                
-                goTo('view-pin-success');
-            }, 1500);
-        }
+        await call('sendMessage', {
+            chat_id: channel,
+            text: winText,
+            parse_mode: 'Markdown'
+        });
 
-        function resetKiosk() {
-            cart = [];
-            total = 0;
-            updateCartUI();
-            goTo('view-start');
-        }
+        alert("Победитель определен и опубликован в канале!");
+        document.querySelector('.active-label').innerText = "● ЗАВЕРШЕНО";
+        document.querySelector('.active-label').style.color = "#64748b";
+    }
+</script>
 
-        function renderBoard() {
-            const prepList = document.getElementById('board-prep-list');
-            const readyList = document.getElementById('board-ready-list');
-            prepList.innerHTML = ''; readyList.innerHTML = '';
-
-            activeOrders.forEach(o => {
-                const el = document.createElement('div');
-                el.className = 'board-order-num';
-                el.innerText = o.id;
-                
-                if(o.status === 'prep') {
-                    prepList.appendChild(el);
-                    el.style.color = '#555';
-                } else {
-                    readyList.appendChild(el);
-                    el.style.color = '#4ca84a';
-                }
-            });
-        }
-
-        // --- OPTIONAL FIREBASE CONNECTION ---
-        /*
-        // Если ты хочешь подключить Firebase обратно, используй этот блок.
-        // Сейчас он закомментирован, чтобы код работал "из коробки" без API ключей.
-        
-        const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            databaseURL: "YOUR_DB_URL",
-            // ... остальное
-        };
-        // firebase.initializeApp(firebaseConfig);
-        // const db = firebase.database();
-        
-        function sendOrderToFirebase(order) {
-           // db.ref('orders').push(order);
-        }
-        */
-
-        // Start
-        goTo('view-start');
-    </script>
 </body>
 </html>
